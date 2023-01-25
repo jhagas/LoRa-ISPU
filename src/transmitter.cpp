@@ -2,11 +2,11 @@
 #include "LoRa_E32.h"
 #include <SoftwareSerial.h>
 
-#define PIN_CO A0
-#define PIN_NO2 A2
+#define PIN_CO A5
+#define PIN_NO2 A7
 
-SoftwareSerial mySerial(3, 4);		 // TX, RX
-LoRa_E32 e32ttl(&mySerial, 2, 6, 5); // AUX, M0, M1
+SoftwareSerial mySerial(5, 4);		 // TX, RX
+LoRa_E32 e32ttl(&mySerial, 6, 2, 3); // AUX, M0, M1
 
 void printParameters(struct Configuration configuration);
 void printModuleInformation(struct ModuleInformation moduleInformation);
