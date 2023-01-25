@@ -1,6 +1,5 @@
 #include "Arduino.h"
 #include "LoRa_E32.h"
-#include "ArduinoJson.h"
 #include <SoftwareSerial.h>
 
 #define PIN_CO A0
@@ -23,7 +22,7 @@ void setup()
 	Configuration configuration = *(Configuration *)c.data;
 	configuration.ADDL = 0x01;
 	configuration.ADDH = 0x00;
-	configuration.CHAN = 0x02;
+	configuration.CHAN = 0x04;
 
 	configuration.OPTION.fec = FEC_1_ON;
 	configuration.OPTION.ioDriveMode = IO_D_MODE_PUSH_PULLS_PULL_UPS;
@@ -44,17 +43,14 @@ void loop()
 {
 	delay(2000);
 
-	float co = map((float)analogRead(PIN_CO), 0, 1023, 1, 1000);
-	float no2 = map((float)analogRead(PIN_NO2), 0, 1023, 0.05, 10);
+	struct Data
+	{
+		float co = map((float)analogRead(PIN_CO), 0, 1023, 1, 1000);
+		float no2 = map((float)analogRead(PIN_NO2), 0, 1023, 0.05, 10);
+	} data;
 
-	String data = "";
-	StaticJsonDocument<256> doc;
-	doc["co"] = co;
-	doc["no2"] = no2;
-	serializeJson(doc, data);
-
-	Serial.println("Send message to 00 03 04");
-	ResponseStatus rs = e32ttl.sendFixedMessage(0, 3, 0x04, data);
+	Serial.println("Broadcast message to channel 19");
+	ResponseStatus rs = e32ttl.sendBroadcastFixedMessage(0x19, &data, sizeof(Data));
 	Serial.println(rs.getResponseDescription());
 }
 

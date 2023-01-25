@@ -14,9 +14,9 @@ void setup()
     ResponseStructContainer c;
     c = e32ttl.getConfiguration();
     Configuration configuration = *(Configuration *)c.data;
-    configuration.ADDL = 3;
-    configuration.ADDH = 0;
-    configuration.CHAN = 0x04;
+    configuration.ADDL = BROADCAST_ADDRESS;
+    configuration.ADDH = BROADCAST_ADDRESS;
+    configuration.CHAN = 0x19;
 
     configuration.OPTION.fec = FEC_1_ON;
     configuration.OPTION.ioDriveMode = IO_D_MODE_PUSH_PULLS_PULL_UPS;
@@ -32,13 +32,21 @@ void setup()
     c.close();
 }
 
+struct Data
+{
+    float co;
+    float no2;
+};
+
 void loop()
 {
     if (e32ttl.available() > 1)
     {
-        ResponseContainer rs = e32ttl.receiveMessage();
-        String message = rs.data;
+        ResponseStructContainer rsc = e32ttl.receiveMessage(sizeof(Data));
+        struct Data data = *(Data *)rsc.data;
 
-        Serial.println(message);
+        Serial.print("CO : "); Serial.print(data.co); Serial.print(" ppm || ");
+        Serial.print("NO2 : "); Serial.print(data.no2); Serial.println(" ppm");
+        free(rsc.data);
     }
 }
