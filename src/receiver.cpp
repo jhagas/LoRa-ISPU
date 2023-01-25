@@ -9,6 +9,7 @@ void setup()
     delay(100);
 
     e32ttl.begin();
+    e32ttl.setMode(MODE_2_POWER_SAVING);
 
     e32ttl.resetModule();
     ResponseStructContainer c;
@@ -21,7 +22,7 @@ void setup()
     configuration.OPTION.fec = FEC_1_ON;
     configuration.OPTION.ioDriveMode = IO_D_MODE_PUSH_PULLS_PULL_UPS;
     configuration.OPTION.transmissionPower = POWER_20;
-    configuration.OPTION.wirelessWakeupTime = WAKE_UP_1250;
+    configuration.OPTION.wirelessWakeupTime = WAKE_UP_250;
 
     configuration.SPED.airDataRate = AIR_DATA_RATE_000_03;
     configuration.SPED.uartBaudRate = UART_BPS_9600;
@@ -45,8 +46,12 @@ void loop()
         ResponseStructContainer rsc = e32ttl.receiveMessage(sizeof(Data));
         struct Data data = *(Data *)rsc.data;
 
-        Serial.print("CO : "); Serial.print(data.co); Serial.print(" ppm || ");
-        Serial.print("NO2 : "); Serial.print(data.no2); Serial.println(" ppm");
+        Serial.print("CO : ");
+        Serial.print(data.co);
+        Serial.print(" ppm || ");
+        Serial.print("NO2 : ");
+        Serial.print(data.no2);
+        Serial.println(" ppm");
         free(rsc.data);
     }
 }

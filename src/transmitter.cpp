@@ -17,6 +17,8 @@ void setup()
 	delay(100);
 
 	e32ttl.begin();
+	e32ttl.setMode(MODE_1_WAKE_UP);
+
 	ResponseStructContainer c;
 	c = e32ttl.getConfiguration();
 	Configuration configuration = *(Configuration *)c.data;
@@ -27,7 +29,7 @@ void setup()
 	configuration.OPTION.fec = FEC_1_ON;
 	configuration.OPTION.ioDriveMode = IO_D_MODE_PUSH_PULLS_PULL_UPS;
 	configuration.OPTION.transmissionPower = POWER_20;
-	configuration.OPTION.wirelessWakeupTime = WAKE_UP_1250;
+	configuration.OPTION.wirelessWakeupTime = WAKE_UP_2000;
 
 	configuration.SPED.airDataRate = AIR_DATA_RATE_000_03;
 	configuration.SPED.uartBaudRate = UART_BPS_9600;
@@ -41,7 +43,7 @@ void setup()
 
 void loop()
 {
-	delay(2000);
+	delay(10000);
 
 	struct Data
 	{
