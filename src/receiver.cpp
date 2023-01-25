@@ -1,0 +1,44 @@
+#include "Arduino.h"
+#include "LoRa_E32.h"
+
+LoRa_E32 e32ttl(3, 4, 2, 6, 5); // TX, RX, AUX, M0, M1
+
+void setup()
+{
+    Serial.begin(9600);
+    delay(100);
+
+    e32ttl.begin();
+
+    e32ttl.resetModule();
+    ResponseStructContainer c;
+    c = e32ttl.getConfiguration();
+    Configuration configuration = *(Configuration *)c.data;
+    configuration.ADDL = 3;
+    configuration.ADDH = 0;
+    configuration.CHAN = 0x04;
+
+    configuration.OPTION.fec = FEC_1_ON;
+    configuration.OPTION.ioDriveMode = IO_D_MODE_PUSH_PULLS_PULL_UPS;
+    configuration.OPTION.transmissionPower = POWER_20;
+    configuration.OPTION.wirelessWakeupTime = WAKE_UP_1250;
+
+    configuration.SPED.airDataRate = AIR_DATA_RATE_000_03;
+    configuration.SPED.uartBaudRate = UART_BPS_9600;
+    configuration.SPED.uartParity = MODE_00_8N1;
+
+    configuration.OPTION.fixedTransmission = FT_FIXED_TRANSMISSION;
+    e32ttl.setConfiguration(configuration, WRITE_CFG_PWR_DWN_SAVE);
+    c.close();
+}
+
+void loop()
+{
+    if (e32ttl.available() > 1)
+    {
+        ResponseContainer rs = e32ttl.receiveMessage();
+        String message = rs.data;
+
+        Serial.println(message);
+    }
+}
